@@ -1,0 +1,89 @@
+<!--
+
+/*
+** Copyright (c) 2020 The Khronos Group Inc.
+**
+** Permission is hereby granted, free of charge, to any person obtaining a
+** copy of this software and/or associated documentation files (the
+** "Materials"), to deal in the Materials without restriction, including
+** without limitation the rights to use, copy, modify, merge, publish,
+** distribute, sublicense, and/or sell copies of the Materials, and to
+** permit persons to whom the Materials are furnished to do so, subject to
+** the following conditions:
+**
+** The above copyright notice and this permission notice shall be included
+** in all copies or substantial portions of the Materials.
+**
+** THE MATERIALS ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+** EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+** MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+** IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+** CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+** TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+** MATERIALS OR THE USE OR OTHER DEALINGS IN THE MATERIALS.
+*/
+
+-->
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+
+    <title>WEBGL_video_texture sample</title>
+
+    <!--
+      This sample demonstrates how to render a 360 degree panoramic video in VR.
+    -->
+
+    <style>
+      #webgpu-canvas {
+        box-sizing: border-box;
+        height: 100%;
+        left: 0;
+        margin: 0;
+        position: absolute;
+        top: 0;
+        width: 100%;
+      }
+    </style>
+  </head>
+
+  <body>
+    <canvas id="webgpu-canvas"></canvas>
+  </body>
+  <script src="http://mrdoob.github.io/stats.js/build/stats.min.js"></script>
+  <script type="module" src="src/examples/videoUploading.js"></script>
+  <script type="module">
+  import {onAnimationFrame} from "./src/examples/videoUploading.js"
+  (function () {
+  "use strict";
+  const video = document.createElement('video');
+  const canvas = document.getElementById('webgpu-canvas');
+
+  const interCanvas = document.createElement('canvas');
+  var interCanvasContext = interCanvas.getContext('2d');
+
+  window.addEventListener("resize", onResize, false);
+  onResize();
+  function onResize () {
+    canvas.width = canvas.offsetWidth * window.devicePixelRatio;
+    canvas.height = canvas.offsetHeight * window.devicePixelRatio;
+  }
+
+  //const onFrameFunc = onAnimationFrame("assets/video/Test.webm", video, canvas);
+  onAnimationFrame("assets/video/Test.webm", video, canvas).then((frame) => {
+    video.addEventListener('playing', function() {
+      interCanvasContext.width = video.videoWidth;
+      interCanvasContext.height = video.videoHeight;
+      interCanvas.width = interCanvasContext.width
+      interCanvas.height = interCanvasContext.height
+      requestAnimationFrame(function() {frame(interCanvas, interCanvasContext)});
+    });
+  })
+})();
+</script>
+</html>
